@@ -10,13 +10,6 @@ use Illuminate\Support\Str;
 
 class AmoAuthService extends AmoService
 {
-    protected VariableStorageService $storage;
-
-    public function __construct(VariableStorageService $storage)
-    {
-        $this->storage = $storage;
-    }
-
     public function authorizeWithCode(string $code): void
     {
         $domain = config('services.amocrm.domain');
