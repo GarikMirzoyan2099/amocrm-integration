@@ -29,9 +29,9 @@ class AmoAuthService extends AmoService
 
         $data = $response->json();
 
-        $this->storage->setEncrypted('amo_access_token', $data['access_token']);
-        $this->storage->setEncrypted('amo_refresh_token', $data['refresh_token']);
-        $this->storage->setEncrypted('amo_expires_at', now()->addSeconds($data['expires_in'])->toDateTimeString());
+        $this->variableStorageService->setEncrypted('amo_access_token', $data['access_token']);
+        $this->variableStorageService->setEncrypted('amo_refresh_token', $data['refresh_token']);
+        $this->variableStorageService->setEncrypted('amo_expires_at', now()->addSeconds($data['expires_in'])->toDateTimeString());
     }
 
     public function generateState(): string
