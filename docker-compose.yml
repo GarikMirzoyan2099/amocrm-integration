@@ -1,0 +1,68 @@
+services:
+
+    nginx:
+        image: amo-nginx
+        container_name: amo-nginx
+        build:
+            context: .
+            dockerfile: docker-compose/nginx/Dockerfile
+            args:
+                NGINX_VERSION: ${NGINX_VERSION:-1.17-alpine}
+        restart: unless-stopped
+        ports:
+            - ${EXPOSED_NGINX_PORT}:${NGINX_PORT}
+        depends_on:
+            - app
+            - db
+        networks:
+            - amo
+
+    db:
+        image: postgres:15
+        container_name: amo-db
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        restart: unless-stopped
+        volumes:
+            - ./docker-compose/postgres/data:/var/lib/postgresql/data
+        networks:
+            - amo
+        ports:
+          - "5435:5432"
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    app:
+        image: amo-app
+        container_name: amo-app
+        build:
+            context: .
+            dockerfile: ${MASTER_SERVICE_DOCKERFILE_NAME:-Dockerfile}
+            args:
+                PHP_VERSION: ${MASTER_SERVICE_PHP_VERSION:-8.2}
+                COMPOSER_VERSION: ${MASTER_SERVICE_COMPOSER_VERSION:-latest}
+        restart: unless-stopped
+        volumes:
+            - .:/var/www
+            - ./docker-compose/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+        networks:
+            - amo
+
+    daemon_token:
+        image: amo-app
+        container_name: amo-daemon-token
+        extends:
+            service: app
+        entrypoint: [ "php", "artisan" ]
+        command: daemon-token
+        depends_on:
+            - app
+networks:
+    amo:
+        name: "amo"
+        driver: bridge
