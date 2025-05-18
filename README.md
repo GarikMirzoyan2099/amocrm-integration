@@ -28,4 +28,18 @@ docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
 docker-compose exec app php artisan migrate
 
-сервис интеграция готов
+### 5. AmoCRM интеграция
+Проект использует OAuth2 для авторизации с AmoCRM.
+
+Убедитесь, что следующие переменные в .env корректны:
+
+
+AMO_CLIENT_ID=your_client_id
+AMO_CLIENT_SECRET=your_client_secret
+AMO_REDIRECT_URI=https://your-app.com/oauth/callback
+Для начала авторизации перейдите по URL:
+
+/amo-auth
+
+выдайте права интеграции.
+После авторизации токены сохраняются в базе данных.
