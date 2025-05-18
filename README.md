@@ -36,7 +36,7 @@ docker-compose exec app php artisan migrate
 
 AMO_CLIENT_ID=your_client_id
 AMO_CLIENT_SECRET=your_client_secret
-AMO_REDIRECT_URI=https://your-app.com/oauth/callback
+AMO_REDIRECT_URI=https://your-app.com/amocrm/auth-callback
 Для начала авторизации перейдите по URL:
 
 /amo-auth
